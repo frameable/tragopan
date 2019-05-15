@@ -1,0 +1,119 @@
+<style>
+  body {
+    background: #f4f5f8;
+  }
+  #viewport {
+    width: 800px;
+    height: 500px;
+    overflow: scroll;
+    margin: auto;
+  }
+  #content {
+    background: white;
+    width: 2400px;
+    height: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: top left;
+  }
+  #content p {
+    width: 400px;
+    background: cyan;
+  }
+</style>
+
+
+<div id="viewport">
+  <div id="content">
+    <p>Tragopan is a bird genus in the Phasianidae family, which is commonly called "horned pheasant" because males have two brightly colored, fleshy horns on their head that can be erected during courtship displays.The habit of tragopans nesting in trees is unique among phasianids.</p>
+  </div>
+</div>
+
+<script>
+
+class Tragopan {
+
+  constructor({ viewport }) {
+    this.viewport = viewport;
+    this.content = viewport.children[0];
+    this.matrix = { scale: 1, tx: 0, ty: 0 };
+    this.registeredEventListeners = { panstart: [], panmove: [], panend: [] };
+    this._addListeners();
+  }
+
+  dispatch(eventName, data) {
+    for (const callback of this.registeredEventListeners[eventName]) {
+      callback.call(this, data);
+    }
+  }
+
+  on(eventName, callback) {
+    this.registeredEventListeners[eventName].push(callback);
+  }
+
+  _addListeners() {
+    let x, y;
+
+    const handleMouseMove = (e) => {
+      const dx = e.clientX - x;
+      const dy = e.clientY - y;
+      x = e.clientX;
+      y = e.clientY;
+      this.viewport.scroll(this.viewport.scrollLeft - dx, this.viewport.scrollTop - dy);
+      this.dispatch('panmove', { dx, dy, x, y, mouseEvent: e });
+    };
+
+    const handleMouseUp = (e) => {
+      x = e.clientX;
+      y = e.clientY;
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      this.dispatch('panend', { x, y, mouseEvent: e });
+    };
+
+    this.viewport.addEventListener('mousedown', (e) => {
+      x = e.clientX;
+      y = e.clientY;
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      this.dispatch('panstart', { x, y, mouseEvent: e });
+    });
+
+    this.viewport.addEventListener('wheel', (e) => {
+      if (e.ctrlKey) {
+        e.stopPropagation();
+        e.preventDefault();
+        const dir = e.wheelDelta > 0 ? 1 : -1;
+        if (dir == 1) {
+          this.matrix.scale *= 1.04;
+        } else {
+          this.matrix.scale *= 0.96;
+        }
+        this.content.style.transform = `scale(${this.matrix.scale})`;
+      }
+    });
+
+    this.viewport.addEventListener('scroll', (e) => {
+      this.matrix.tx = this.viewport.scrollLeft;
+      this.matrix.ty = this.viewport.scrollTop;
+    });
+  }
+}
+
+
+const panzoom = new Tragopan({ viewport: document.getElementById('viewport') });
+
+panzoom.on('panstart', (data) => {
+  console.log("PANSTART", data);
+});
+panzoom.on('panmove', (data) => {
+  console.log("PANSTART", data.dx, data.dy);
+});
+panzoom.on('panend', (data) => {
+  console.log("PANEND", data);
+});
+
+</script>
+
+
