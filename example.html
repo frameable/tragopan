@@ -1,0 +1,52 @@
+<style>
+  body {
+    background: #f4f5f8;
+  }
+  #viewport {
+    width: 800px;
+    height: 500px;
+    margin: auto;
+  }
+  #content {
+    background: white;
+    width: 2400px;
+    height: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: top left;
+  }
+  #content p {
+    width: 400px;
+    background: cyan;
+  }
+</style>
+
+<div id="viewport">
+  <div id="content">
+    <p>Tragopan is a bird genus in the Phasianidae family, which is commonly called "horned pheasant" because males have two brightly colored, fleshy horns on their head that can be erected during courtship displays.The habit of tragopans nesting in trees is unique among phasianids.</p>
+  </div>
+</div>
+
+<script src="tragopan.js"></script>
+
+<script>
+
+  const panzoom = new Tragopan({
+    viewport: document.getElementById('viewport'),
+    content: document.getElementById('content')
+  });
+
+  panzoom.on('panstart', (data) => {
+    console.log("PANSTART", data);
+  });
+  panzoom.on('panmove', (data) => {
+    console.log("PANMOVE", data.dx, data.dy);
+  });
+  panzoom.on('panend', (data) => {
+    console.log("PANEND", data);
+  });
+
+</script>
+
+
