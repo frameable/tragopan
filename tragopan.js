@@ -63,7 +63,6 @@ class Tragopan {
         let mouseY = e.offsetY;
         let el = e.target;
         while (el !== this.content && el) {
-          console.log("EL", el);
           mouseX += el.offsetLeft;
           mouseY += el.offsetTop;
           el = el.offsetParent;
@@ -89,21 +88,25 @@ class Tragopan {
     const prevScale = this.matrix.scale;
     const factor = scale / prevScale;
     this.matrix.scale = scale;
-    this.content.style.transform = `scale(${this.matrix.scale})`;
+
     focus = focus || {
-      x: this.matrix.tx + this.viewport.offsetWidth / 2,
-      y: this.matrix.ty + this.viewport.offsetTop / 2
+      x: this.matrix.tx / prevScale + (this.viewport.offsetWidth / 2 / prevScale),
+      y: this.matrix.ty / prevScale + (this.viewport.offsetHeight / 2 / prevScale)
     };
-    const dx = Math.floor(focus.x * prevScale - focus.x * this.matrix.scale);
-    const dy = Math.floor(focus.y * prevScale - focus.y * this.matrix.scale);
+
+    const dx = Math.round(focus.x * prevScale - focus.x * this.matrix.scale);
+    const dy = Math.round(focus.y * prevScale - focus.y * this.matrix.scale);
+
     const scrollLeft = this.viewport.scrollLeft - dx;
     const scrollTop = this.viewport.scrollTop - dy;
-    
-    this.pan(scrollLeft, scrollTop);
+
+    // pan before or after depending on whether we're zooming in or out
+    scale < prevScale && this.pan(scrollLeft, scrollTop);
+    this.content.style.transform = `scale(${this.matrix.scale})`;
+    scale >= prevScale && this.pan(scrollLeft, scrollTop);
   }
 
   pan(scrollLeft, scrollTop) {
     viewport.scroll(scrollLeft, scrollTop);
   }
-
 }
