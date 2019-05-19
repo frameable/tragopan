@@ -1,17 +1,25 @@
 class Tragopan {
 
-  constructor({ viewport, content, minScale, maxScale }) {
+  constructor({ viewport, content, minScale, maxScale, scaleIncrement, scrollZoom, spacePan}) {
     this.viewport = viewport;
     this.viewport.style.overflow = 'scroll';
+    this.spacePan = spacePan;
     this.content = content;
-    this.matrix = { scale: 1, tx: 0, ty: 0 };
+    this.scale = 1;
+    this.tx = 0;
+    this.ty = 0;
+    this.scrollZoom = scrollZoom;
+    this.scaleIncrement = scaleIncrement || 0.04;
     this.minScale = Number.isFinite(minScale) ? minScale : 0.5;
     this.maxScale = Number.isFinite(maxScale) ? maxScale : 4;
     this.registeredEventListeners = { panstart: [], panmove: [], panend: [], panchange: [], panzoom: [] };
+    this.window = window;
     this._addListeners();
+    this.isDisabled = false;
   }
 
   dispatch(eventName, data) {
+    if (this.isDisabled) return;
     for (const callback of this.registeredEventListeners[eventName]) {
       callback.call(this, { eventName, ...data });
     }
@@ -28,37 +36,57 @@ class Tragopan {
     let x, y;
 
     const handleMouseMove = (e) => {
-      const dx = e.clientX - x;
-      const dy = e.clientY - y;
+      if (this.isDisabled) return;
+      if (x === null && y === null) {
+        x = e.clientX;
+        y = e.clientY;
+        return;
+      }
+      const offsetX = e.clientX - x;
+      const offsetY = e.clientY - y;
+      this.viewport.scroll(this.viewport.scrollLeft - offsetX, this.viewport.scrollTop - offsetY);
       x = e.clientX;
       y = e.clientY;
-      this.pan(this.viewport.scrollLeft - dx, this.viewport.scrollTop - dy);
-      this.dispatch('panmove', { dx, dy, x, y, mouseEvent: e });
+      const dx = offsetX / this.scale;
+      const dy = offsetY / this.scale;
+      this.dispatch('panmove', { dx, dy, x: x / this.scale, y: y / this.scale, mouseEvent: e });
     };
 
     const handleMouseUp = (e) => {
+      if (this.isDisabled) return;
       x = e.clientX;
       y = e.clientY;
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      this.isPanning = false;
       this.dispatch('panend', { x, y, mouseEvent: e });
     };
 
-    this.viewport.addEventListener('mousedown', (e) => {
+    const handleMouseDown = (e) => {
+      if (this.isDisabled) return;
+      if (this.isPanning) return;
       x = e.clientX;
       y = e.clientY;
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
+      this.isPanning = true;
       this.dispatch('panstart', { x, y, mouseEvent: e });
+    }
+
+    this.viewport.addEventListener('mousedown', (e) => {
+      handleMouseDown(e);
     });
 
     this.viewport.addEventListener('wheel', (e) => {
-      if (e.ctrlKey) {
+      if (this.isDisabled) return;
+      if (e.ctrlKey || (this.scrollZoom && !this.space)) {
         e.stopPropagation();
         e.preventDefault();
-        const prevScale = this.matrix.scale;
+        const prevScale = this.scale;
         const dir = e.wheelDelta > 0 ? 1 : -1;
-        const targetScale = this.matrix.scale * (dir == 1 ? 1.04 : 0.96);
+        const upScale = 1 + this.scaleIncrement;
+        const downScale = 1 - this.scaleIncrement;
+        const targetScale = this.scale * (dir == 1 ? upScale : downScale);
         let mouseX = e.offsetX;
         let mouseY = e.offsetY;
         let el = e.target;
@@ -73,40 +101,96 @@ class Tragopan {
     });
 
     this.viewport.addEventListener('scroll', (e) => {
-      const originalX = this.matrix.tx;
-      const originalY = this.matrix.ty;
-      const x = this.matrix.tx = this.viewport.scrollLeft;
-      const y = this.matrix.ty = this.viewport.scrollTop;
-      const dx = this.matrix.tx - originalX;
-      const dy = this.matrix.ty - originalY;
+      if (this.isDisabled) return;
+      const originalX = this.tx;
+      const originalY = this.ty;
+      const x = this.tx = this.viewport.scrollLeft;
+      const y = this.ty = this.viewport.scrollTop;
+      const dx = this.tx - originalX;
+      const dy = this.ty - originalY;
+    });
+
+    this.window.addEventListener('keydown', (e) => {
+      if (!this.spacePan) return;
+      if (e.keyCode !== 32) return;
+      if (this.isPanning) return;
+      if (this._isKeyboardInteractable(e.target)) return;
+      e.preventDefault();
+      this.isPanning = true;
+      this.space = true;
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      x = y = null;
+      this.dispatch('panstart', { x, y, mouseEvent: e });
+    });
+
+    this.window.addEventListener('keyup', (e) => {
+      if (!this.spacePan) return;
+      if (this.isDisabled) return;
+      this.space = false;
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      this.isPanning = false;
+      this.dispatch('panend', { x, y, mouseEvent: e });
     });
   }
 
-  zoom(scale, focus) {
-    scale = Math.min(scale, this.maxScale);
-    scale = Math.max(scale, this.minScale);
-    const prevScale = this.matrix.scale;
-    const factor = scale / prevScale;
-    this.matrix.scale = scale;
-
-    focus = focus || {
-      x: this.matrix.tx / prevScale + (this.viewport.offsetWidth / 2 / prevScale),
-      y: this.matrix.ty / prevScale + (this.viewport.offsetHeight / 2 / prevScale)
-    };
-
-    const dx = Math.round(focus.x * prevScale - focus.x * this.matrix.scale);
-    const dy = Math.round(focus.y * prevScale - focus.y * this.matrix.scale);
-
-    const scrollLeft = this.viewport.scrollLeft - dx;
-    const scrollTop = this.viewport.scrollTop - dy;
-
-    // pan before or after depending on whether we're zooming in or out
-    scale < prevScale && this.pan(scrollLeft, scrollTop);
-    this.content.style.transform = `scale(${this.matrix.scale})`;
-    scale >= prevScale && this.pan(scrollLeft, scrollTop);
+  _isKeyboardInteractable(el) {
+    // https://stackoverflow.com/questions/1599660/which-html-elements-can-receive-focus/1600194#1600194
+    const candidate = el.matches(`a[href],area[href],button,details,input,select,textarea,[tabindex]`);
+    return (candidate && !el.disabled) || el.isContentEditable || el.classList.contains('tragopan-pannable');
   }
 
-  pan(scrollLeft, scrollTop) {
-    viewport.scroll(scrollLeft, scrollTop);
+  zoom(scale, focalPoint) {
+    if (this.isDisabled) return;
+    scale = Math.min(scale, this.maxScale);
+    scale = Math.max(scale, this.minScale);
+    const prevScale = this.scale;
+    const factor = scale / prevScale;
+    this.scale = scale;
+
+    // determine our center focal point if it wasn't provided
+    focalPoint = focalPoint || {
+      x: this.tx / prevScale + (this.viewport.offsetWidth / 2 / prevScale),
+      y: this.ty / prevScale + (this.viewport.offsetHeight / 2 / prevScale)
+    };
+
+    // determine how far we have to shift to compensate for scaling to keep focus
+    const dx = Math.round(focalPoint.x * prevScale - focalPoint.x * this.scale);
+    const dy = Math.round(focalPoint.y * prevScale - focalPoint.y * this.scale);
+    const scrollLeft = (this.viewport.scrollLeft - dx);
+    const scrollTop = (this.viewport.scrollTop - dy);
+
+    // pan before or after depending on whether we're zooming in or out
+    scale < prevScale && this.viewport.scroll(scrollLeft, scrollTop);
+    this.content.style.transform = `scale(${this.scale})`;
+    scale >= prevScale && this.viewport.scroll(scrollLeft, scrollTop);
+  }
+
+  pan(x, y) {
+    if (this.isDisabled) return;
+    const scrollLeft = x * this.scale;
+    const scrollTop = y * this.scale;
+    const dx = this.viewport.scrollLeft - x;
+    const dy = this.viewport.scrollTop - y;
+    this.viewport.scroll(scrollLeft, scrollTop);
+    this.tx = scrollLeft / this.scale;
+    this.ty = scrollTop / this.scale;
+    this.dispatch('panmove', { dx, dy, x, y, mouseEvent: null });
+  }
+
+  disable() {
+    this.isDisabled = true;
+  }
+
+  enable() {
+    this.isDisabled = false;
+  }
+
+  reset() {
+    if (this.isDisabled) return;
+    this.content.style.transform = 'scale(1)';
+    this.scale = 1;
+    this.pan(0, 0);
   }
 }
