@@ -2,7 +2,7 @@
 
 Minimal dependency-free pan/zoom library
 
-```
+```html
   <div id="viewport">
     <div id="content">
       <!-- your pan/zoomable content here -->
@@ -25,9 +25,9 @@ Instantiate a pan/zoomable tragopan instance, given a viewport and a nested cont
 
   - `viewport`: reference to a top-level element which will contain content to be panned and zoomed
   - `content`: a child element of the viewport
-  - `scrollZoom`: enable bare scrolling to zoom, rather than ctrl/option-scrollto zoom (defaults to _false_)
-  - `scaleIncrement`: percentage by which zooming in or out one click should change the scale (defaults to 0.04)
-  - `spacePan`: enable panning via holding down the space bar (defaults to _false_)
+  - `scaleIncrement`: percentage by which zooming in or out one click should change the scale (default `0.04`)
+  - `scrollZoom`: enable bare scrolling to zoom, rather than ctrl/option-scrollto zoom (default `false`)
+  - `spacePan`: enable panning via holding down the space bar (default `false`)
 
 
 ### tragopan.pan(x, y)

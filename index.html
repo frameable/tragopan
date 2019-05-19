@@ -1,0 +1,109 @@
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    width: 100vw;
+    height: 100vh;
+    scrollbar-width: none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  body::-webkit-scrollbar {
+    display: none;
+  }
+  #content {
+    background: white;
+    width: 500vw;
+    height: 500vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: top left;
+    user-select: none;
+  }
+  img {
+    pointer-events: none;
+  }
+  #toolbar {
+    position: fixed;
+    bottom: -2px;
+    background: whitesmoke;
+    padding: 12px 20px;
+    display: flex;
+    color: #333;
+    left: 50%;
+    transform: translate(-50%);
+    width: max-length;
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 0 2.5px rgba(0,0,0,0.6);
+    font-size: 13px;
+    align-items: center;
+  }
+  #toolbar > * {
+    margin: 0 10px;
+    white-space: nowrap;
+    vertical-align: middle;
+    color: #333;
+  }
+  input {
+    vertical-align: middle;
+  }
+  input[type=number] {
+    width: 5em;
+  }
+</style>
+
+<div id="content">
+  <img src="tragopan.jpg">
+</div>
+
+<div id="toolbar">
+  <label><input onchange="toggleSpacePan(event)" type="checkbox">spacePan</label>
+  <label><input onchange="toggleScrollZoom(event)" type="checkbox">scrollZoom</label>
+  <label>scaleIncrement: <input onchange="setScaleIncrement(event)" type="number" step="0.01" value="0.04"></label>
+  <button onclick="center(event)">center</button>
+  <button onclick="zoomIn(event)">zoomIn</button>
+  <button onclick="zoomOut(event)">zoomOut</button>
+</div>
+
+<script src="tragopan.js"></script>
+
+<script>
+
+  const panzoom = new Tragopan({
+    viewport: document.body,
+    content: document.getElementById('content'),
+  });
+
+  function toggleSpacePan(e) {
+    panzoom.configure({ spacePan: !panzoom.spacePan });
+    e.target.blur();
+  }
+
+  function toggleScrollZoom(e) {
+    panzoom.configure({ scrollZoom: !panzoom.scrollZoom });
+    e.target.blur();
+  }
+
+  function setScaleIncrement(e) {
+    panzoom.configure({ scaleIncrement: Number(e.target.value) });
+    e.target.blur();
+  }
+
+  function center(e) {
+    panzoom.center();
+    e.target.blur();
+  }
+
+  function zoomIn(e) {
+    panzoom.zoomIn();
+    e.target.blur();
+  }
+
+  function zoomOut(e) {
+    panzoom.zoomOut();
+    e.target.blur();
+  }
+
+</script>
+
