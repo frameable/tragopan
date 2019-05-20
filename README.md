@@ -26,7 +26,7 @@ Instantiate a pan/zoomable tragopan instance, given a viewport and a nested cont
   - `viewport`: reference to a top-level element which will contain content to be panned and zoomed
   - `content`: a child element of the viewport
   - `scaleIncrement`: percentage by which zooming in or out one click should change the scale (default `0.04`)
-  - `scrollZoom`: enable bare scrolling to zoom, rather than ctrl/option-scrollto zoom (default `false`)
+  - `scrollZoom`: enable bare scrolling to zoom, rather than ctrl/option-scroll to zoom (default `false`)
   - `spacePan`: enable panning via holding down the space bar (default `false`)
 
 
