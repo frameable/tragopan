@@ -112,7 +112,7 @@ class Tragopan {
         this.zoom(targetScale, { x: mouseX, y: mouseY });
         this.dispatch('panzoom', { mouseEvent: e });
       }
-    });
+    }, { passive: false });
 
     this.viewport.addEventListener('scroll', (e) => {
       if (this.isDisabled) return;
