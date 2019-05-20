@@ -180,6 +180,8 @@ class Tragopan {
     scale < prevScale && this.viewport.scroll(scrollLeft, scrollTop);
     this.content.style.transform = `scale(${this.scale})`;
     scale >= prevScale && this.viewport.scroll(scrollLeft, scrollTop);
+    this.tx = scrollLeft / this.scale;
+    this.ty = scrollTop / this.scale;
   }
 
   zoomIn(scaleIncrement) {
