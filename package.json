@@ -1,0 +1,17 @@
+{
+  "name": "tragopan",
+  "version": "1.0.0",
+  "description": "Minimal dependency-free pan/zoom library",
+  "main": "tragopan.js",
+  "author": "David Chester <david@plectica.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/systemsthinkinginstitute/tragopan.git"
+  }
+}
