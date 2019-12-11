@@ -28,7 +28,8 @@ Instantiate a pan/zoomable tragopan instance, given a viewport and a nested cont
   - `scaleIncrement`: percentage by which zooming in or out one click should change the scale (default `0.04`)
   - `scrollZoom`: enable bare scrolling to zoom, rather than ctrl/option-scroll to zoom (default `false`)
   - `spacePan`: enable panning via holding down the space bar (default `false`)
-
+  - `minScale`: minimum zoom scale factor (default `0.5`)
+  - `maxScale`: maximum zoom scale factor (default `4`)
 
 ### tragopan.pan(x, y)
 
