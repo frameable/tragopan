@@ -3,6 +3,7 @@ class Tragopan {
   constructor() {
     this.configure(...arguments);
     this.viewport.style.overflow = 'scroll';
+    this.content.style.transformOrigin = 'top left';
     this.scale = 1;
     this.tx = 0;
     this.ty = 0;
