@@ -1,6 +1,6 @@
 {
   "name": "tragopan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Minimal dependency-free pan/zoom library",
   "main": "tragopan.js",
   "author": "David Chester <david@plectica.com>",
