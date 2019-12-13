@@ -230,3 +230,7 @@ class Tragopan {
     this.pan(0, 0);
   }
 }
+
+if (typeof module === "object" && module.exports) {
+  module.exports = Tragopan;
+}
