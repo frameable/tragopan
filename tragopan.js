@@ -98,7 +98,7 @@ class Tragopan {
         e.stopPropagation();
         e.preventDefault();
         const prevScale = this.scale;
-        const dir = e.wheelDelta > 0 ? 1 : -1;
+        const dir = e.deltaY > 0 ? -1 : 1;
         const upScale = 1 + this.scaleIncrement;
         const downScale = 1 - this.scaleIncrement;
         const targetScale = this.scale * (dir == 1 ? upScale : downScale);
