@@ -117,7 +117,10 @@ class Tragopan {
 
     const handleGestureChange = (e) => {
       e.preventDefault();
-      window.requestAnimationFrame(_ => { this.zoom(e.scale) });
+      window.requestAnimationFrame(_ => {
+        this.zoom(e.scale);
+        this.dispatch('panzoom', { mouseEvent: e });
+      });
     };
 
     this.viewport.addEventListener('gesturestart', (e) => {
