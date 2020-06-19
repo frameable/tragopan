@@ -22,8 +22,8 @@ Minimal dependency-free pan/zoom library
 ## Features
 
 - Vanilla JavaScript
-- Just ~200 lines of code
-- Gzip'd payload is about 2k
+- Just ~200 source lines of code
+- Minified gzip'd payload is 1.6k
 - Fast -- uses native browser scrolling for panning
 - Focal zooming in/out based on mouse pointer position
 - Options for panning with space-drag, zooming with scroll
