@@ -127,7 +127,7 @@ class Tragopan {
 
     this.viewport.addEventListener('gestureend', (e) => {
       e.preventDefault();
-      this.viewport.addEventListener('gesturechange', handleGestureChange);
+      this.viewport.removeEventListener('gesturechange', handleGestureChange);
     });
 
     this.viewport.addEventListener('scroll', (e) => {
