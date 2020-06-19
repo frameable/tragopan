@@ -115,6 +115,24 @@ class Tragopan {
       }
     }, { passive: false });
 
+    const handleGestureChange = (e) => {
+      e.preventDefault();
+      window.requestAnimationFrame(_ => {
+        this.zoom(e.scale);
+        this.dispatch('panzoom', { mouseEvent: e });
+      });
+    };
+
+    this.viewport.addEventListener('gesturestart', (e) => {
+      e.preventDefault();
+      this.viewport.addEventListener('gesturechange', handleGestureChange);
+    });
+
+    this.viewport.addEventListener('gestureend', (e) => {
+      e.preventDefault();
+      this.viewport.removeEventListener('gesturechange', handleGestureChange);
+    });
+
     this.viewport.addEventListener('scroll', (e) => {
       if (this.isDisabled) return;
       const originalX = this.tx;

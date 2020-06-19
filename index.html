@@ -123,5 +123,11 @@
     e.target.blur();
   }
 
+  panzoom.on('panstart', (e) => { console.log('PAN START: ', e); });
+  panzoom.on('panmove', (e) => { console.log('PAN MOVE: ', e); });
+  panzoom.on('panend', (e) => { console.log('PAN END: ', e); });
+  panzoom.on('panzoom', (e) => { console.log('PAN ZOOM: ', e); });
+  panzoom.on('panchange', (e) => { console.log('PAN CHANGE: ', e); });
+
 </script>
 
