@@ -56,6 +56,16 @@
     font-size: 14px;
     padding: 4px 12px;
   }
+  #toolbar .instructions {
+    position: absolute;
+    bottom: calc(100% + 20px);
+    left: 0;
+    right: 0;
+    color: #777;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.4;
+  }
 </style>
 
 <div id="content">
@@ -63,6 +73,9 @@
 </div>
 
 <div id="toolbar">
+  <div class="instructions">
+    Pan with click-drag or two-finger-pan; zoom by ctrl/option-scroll or pinch!
+  </div>
   <label><input onchange="toggleSpacePan(event)" type="checkbox">spacePan</label>
   <label><input onchange="toggleScrollZoom(event)" type="checkbox">scrollZoom</label>
   <label>scaleIncrement: <input onchange="setScaleIncrement(event)" type="number" step="0.01" value="0.04"></label>
