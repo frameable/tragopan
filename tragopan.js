@@ -110,8 +110,12 @@ class Tragopan {
           mouseY += el.offsetTop;
           el = el.offsetParent;
         }
-        this.zoom(targetScale, { x: mouseX, y: mouseY });
-        this.dispatch('panzoom', { mouseEvent: e });
+        window.requestAnimationFrame(_ => {
+          this.zoom(targetScale, { x: mouseX, y: mouseY });
+          this.dispatch('panzoom', { mouseEvent: e });
+        });
+      } else {
+        this.dispatch('panmove', { mouseEvent: e });
       }
     }, { passive: false });
 
