@@ -1,3 +1,5 @@
+![](https://team-video.github.io/tragopan/mascot.jpg)
+
 # tragopan
 
 Minimal dependency-free pan/zoom library
@@ -17,13 +19,19 @@ Minimal dependency-free pan/zoom library
   </script>
 ```
 
+## Features
+
+- Vanilla JavaScript
+- Just ~200 lines of code
+- Gzip'd payload is about 2k
+- Fast -- uses native browser scrolling for panning
+- Focal zooming in/out based on mouse pointer position
+- Options for panning with space-drag, zooming with scroll
+- Made with :heart: at https://team.video
+
 ## How it works
 
 Tragopan uses native browser scrolling as its implementation for panning (left/right/up/down), and transform/scale for zooming (in/out).  In our testing, we found that native scrolling was far more efficient than using transform for panning.  As an extra bonus, if your DOM is structured so that your `viewport` element can be your document body, some browsers appear to do even more optimization for that special case.
-
-## Caveats
-
-This is not especially well-tested on mobile, and may be lacking there.
 
 ## Methods
 
