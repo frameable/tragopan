@@ -23,7 +23,7 @@ Minimal dependency-free pan/zoom library
 
 - Vanilla JavaScript
 - Just ~200 source lines of code
-- Minified gzip'd payload is 1.6k
+- Minified gzip'd payload is about 1.6k
 - Fast -- uses native browser scrolling for panning
 - Focal zooming in/out based on mouse pointer position
 - Options for panning with space-drag, zooming with scroll
@@ -47,6 +47,10 @@ Instantiate a pan/zoomable tragopan instance, given a viewport and a nested cont
   - `minScale`: minimum zoom scale factor (default `0.5`)
   - `maxScale`: maximum zoom scale factor (default `4`)
 
+### tragopan.configure(options)
+
+Configure a tragopan instance with any options accepted by the constructor above.
+
 ### tragopan.pan(x, y)
 
 Pan to the given x and y coordinates in content space.
@@ -54,6 +58,22 @@ Pan to the given x and y coordinates in content space.
 ### tragopan.zoom(scale[, focalPoint])
 
 Zoom to the given scale, keeping the given focal point in-place on the screen.  Focal point should be an object with x and y coordinates in content space.  If focal point is ommitted, the center point of the viewport is used instead.
+
+### tragopan.zoomIn([scaleIncrement])
+
+Zoom in by the given `scaleIncrement` if provided, or else zoom in by the configured/default `scaleIncrement`.
+
+### tragopan.zoomOut([scaleIncrement])
+
+Zoom out by the given `scaleIncrement` if provided, or else zoom out by the configured/default `scaleIncrement`.
+
+### tragopan.center()
+
+Pan to the center of the content
+
+### tragopan.reset()
+
+Pan to the center of the content
 
 
 ### tragopan.on(eventName, handlerFn)
