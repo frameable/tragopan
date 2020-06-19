@@ -227,7 +227,7 @@ class Tragopan {
     if (this.isDisabled) return;
     this.content.style.transform = 'scale(1)';
     this.scale = 1;
-    this.pan(0, 0);
+    this.center();
   }
 }
 
