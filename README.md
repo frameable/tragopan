@@ -27,7 +27,7 @@ Minimal dependency-free pan/zoom library
 - Fast -- uses native browser scrolling for panning
 - Focal zooming in/out based on mouse pointer position
 - Options for panning with space-drag, zooming with scroll
-- Made with :heart: at https://team.video
+- Made with :heart: at https://frameable.com
 
 ## How it works
 
